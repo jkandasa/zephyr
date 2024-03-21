@@ -24,10 +24,13 @@ static void lvgl_encoder_process_event(const struct device *dev, struct input_ev
 	struct lvgl_common_input_data *data = dev->data;
 	const struct lvgl_encoder_input_config *cfg = dev->config;
 
+	LOG_INF("received event, c:%d, v:%d, t:%d", evt->code, evt->value, evt->type);
+
 	if (evt->code == cfg->rotation_input_code) {
 		data->pending_event.enc_diff = evt->value;
 	} else if (evt->code == cfg->button_input_code) {
-		data->pending_event.state = evt->value ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+		data->pending_event.state = evt->value ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
+		data->pending_event.key = LV_KEY_ENTER;
 	} else {
 		LOG_DBG("Ignored input event: %u", evt->code);
 		return;

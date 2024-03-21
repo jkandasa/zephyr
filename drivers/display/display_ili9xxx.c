@@ -250,8 +250,10 @@ static int ili9xxx_set_orientation(const struct device *dev,
 	int r;
 	uint8_t tx_data = ILI9XXX_MADCTL_BGR;
 	if (config->quirks->cmd_set == CMD_SET_1) {
+		/*
 		if (orientation == DISPLAY_ORIENTATION_NORMAL) {
 			tx_data |= ILI9XXX_MADCTL_MX;
+			// tx_data =0b00000000;
 		} else if (orientation == DISPLAY_ORIENTATION_ROTATED_90) {
 			tx_data |= ILI9XXX_MADCTL_MV;
 		} else if (orientation == DISPLAY_ORIENTATION_ROTATED_180) {
@@ -259,6 +261,24 @@ static int ili9xxx_set_orientation(const struct device *dev,
 		} else if (orientation == DISPLAY_ORIENTATION_ROTATED_270) {
 			tx_data |= ILI9XXX_MADCTL_MV | ILI9XXX_MADCTL_MX |
 				   ILI9XXX_MADCTL_MY;
+		}
+		*/
+		switch (orientation) {
+		case DISPLAY_ORIENTATION_NORMAL:
+			tx_data = ILI9XXX_MADCTL_ML | ILI9XXX_MADCTL_RGB; // 0 degree
+			break;
+		case DISPLAY_ORIENTATION_ROTATED_90:
+			tx_data = ILI9XXX_MADCTL_MY | ILI9XXX_MADCTL_MV |
+			      ILI9XXX_MADCTL_RGB; // 90 degree
+			break;
+		case DISPLAY_ORIENTATION_ROTATED_180:
+			tx_data = ILI9XXX_MADCTL_MY | ILI9XXX_MADCTL_MX | ILI9XXX_MADCTL_MH |
+			      ILI9XXX_MADCTL_RGB; // 180 degree
+			break;
+		case DISPLAY_ORIENTATION_ROTATED_270:
+			tx_data = ILI9XXX_MADCTL_MX | ILI9XXX_MADCTL_MV |
+			      ILI9XXX_MADCTL_RGB; // 270 degree
+			break;
 		}
 	} else if (config->quirks->cmd_set == CMD_SET_2) {
 		if (orientation == DISPLAY_ORIENTATION_NORMAL) {

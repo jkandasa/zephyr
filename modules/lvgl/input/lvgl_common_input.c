@@ -37,6 +37,12 @@ static void lvgl_input_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data)
 		data->continue_reading = false;
 		return;
 	}
+	if (drv->type == LV_INDEV_TYPE_ENCODER){
+		if (data->state != common_data->previous_event.state){
+			// data->key = LV_KEY_ENTER;
+			data->enc_diff = 0;
+		}
+	}
 
 	memcpy(&common_data->previous_event, data, sizeof(lv_indev_data_t));
 	data->continue_reading = k_msgq_num_used_get(cfg->event_msgq) > 0;
